@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learn English with Stories</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding-top: 2.5vh;
+            padding-bottom: 2.5vh;
+            padding-left: 20px;
+            padding-right: 20px;
+            color: #333;
+            line-height: 1.6;
+            background-color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 95vh;
+        }
+
+        .slider img {
+            height: auto;
+            /* En-boy oranını koru */
+            flex-shrink: 0;
+            border-radius: 10px;
+            scroll-snap-align: center;
+            cursor: pointer;
+            max-height: 80vh;
+            /* Resimlerin maksimum yüksekliğini ekranın %80'i yap */
+        }
+
+        header {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            margin: 0 0 1rem;
+            font-weight: bold;
+        }
+
+        .slider {
+            margin: 1rem auto;
+            max-width: 98%;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            gap: 1rem;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .slider img {
+            height: 100%;
+            flex-shrink: 0;
+            border-radius: 10px;
+            scroll-snap-align: center;
+            cursor: pointer;
+        }
+
+        .slogan {
+            font-size: 1.2rem;
+            margin: 1.5rem 0;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .cta {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            width: 90vw;
+        }
+
+        .cta button {
+            width: 80%;
+            max-width: 300px;
+            padding: 1rem;
+            font-size: 1rem;
+            color: white;
+            background: #4CAF50;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .cta button:hover {
+            background: #45A049;
+            transform: translateY(-2px);
+        }
+
+        .cta a {
+            text-decoration: none;
+            color: #4CAF50;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        /* Modal (Popup) Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            overflow: auto;
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            margin: auto;
+            display: block;
+            width: 80%;
+            max-width: 700px;
+        }
+
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #fff;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1 id="title"></h1>
+        <div class="slider">
+            <img id="image1" src="" alt="Market Screenshot 1" class="image-popup">
+            <img id="image2" src="" alt="Market Screenshot 2" class="image-popup">
+            <img id="image3" src="" alt="Market Screenshot 3" class="image-popup">
+            <img id="image4" src="" alt="Market Screenshot 4" class="image-popup">
+            <img id="image5" src="" alt="Market Screenshot 5" class="image-popup">
+        </div>
+        <p id="slogan" class="slogan"></p>
+        <div class="cta">
+            <button id="cta-button"></button>
+        </div>
+    </header>
+
+    <!-- Modal (Popup) -->
+    <div id="myModal" class="modal">
+        <span class="close" id="close-btn">&times;</span>
+        <img class="modal-content" id="modal-image">
+    </div>
+
+    <script>
+        const translations = {
+            en: {
+                title: "Learn English with Stories",
+                slogan: "The most immersive way to master English effortlessly!",
+                button: "Download Application",
+                image1: "https://play-lh.googleusercontent.com/14tIkc8aCsLNDDsrbmTH1On7o-niNjIM9Tjxr-NkWa-n2HWJ7Oyb8yJUt3f6nhXqOXfs=w5120-h2880-rw",
+                image2: "https://play-lh.googleusercontent.com/zotLDtWc7eKtnpOrG88LmXdgcAaGhxXbceynEtJHOAxbIqOp9_VwoOHd_HW9ePZh_d8x=w5120-h2880-rw",
+                image3: "https://play-lh.googleusercontent.com/O9NUGlNHJBRsLoYp-CqPPsFyKOuTTWwYOdb57uaFQfrPMokqymMOHxcgo3qIq_B-ElA=w5120-h2880-rw",
+                image4: "https://play-lh.googleusercontent.com/VhsKubgQUMfrkefCnUXk4m49-nbVkc5LFDsvI9YEgXROl4GuYGWOe9WXRx0pYj5g_Fg=w5120-h2880-rw",
+                image5: "https://play-lh.googleusercontent.com/szAkLuhgYKu6QEiXfy3J38dD7huU2V6t3FqWD4XR96s7Evuiqshu9_WaWYDoaPLy6A=w5120-h2880-rw"
+            },
+            tr: {
+                title: "Hikayelerle İngilizce Öğren",
+                slogan: "İngilizceyi zahmetsizce öğrenmenin en etkileyici yolu!",
+                button: "Uygulamayı İndir",
+                image1: "https://play-lh.googleusercontent.com/FORSvuduuRXSlnISH1vGCXSV_M3RMBssHefxVRUs2GnTVUQOCjO379crmmntFXj7zLs=w5120-h2880-rw",
+                image2: "https://play-lh.googleusercontent.com/PhYYRP74DcH9AHWHF32SV1CF9sJ6uKa4az5boM8tFd1s4F1il_Sr5m6ymyGY6NpTa44=w5120-h2880-rw",
+                image3: "https://play-lh.googleusercontent.com/Y_yR5rB-AmyvEx77r1Yf-216f7Qc7NTF6sSMeB7GKhbxHZk8EFgSv9-0pdOjpRQFBhfT=w5120-h2880-rw",
+                image4: "https://play-lh.googleusercontent.com/90Bf94PZca644Z8I-mJJvOzqmbQS9jW2Xi0PZche5NMfM1Z0qDY3cCOYZ4eTWSzVL18=w5120-h2880-rw",
+                image5: "https://play-lh.googleusercontent.com/27Ju5Bez6zv1mJ4u3bCul-yK2fxLxfZwqja6DJDoGNCw6M1RZut4C51ccJ6cTk7Eb8L1=w5120-h2880-rw"
+            },
+            ru: {
+                title: "Учите английский через истории",
+                slogan: "Улучшайте английский с помощью подсветки слов в реальном времени и мгновенных переводов!",
+                button: "Начать обучение",
+                image1: "https://play-lh.googleusercontent.com/4T7QM3cY9X2nuwdDK4aJBdDx5T567UQf9T26ZhfzuehOSbxBW-pTRnu6QDUcX7sqY9U=w5120-h2880-rw",
+                image2: "https://play-lh.googleusercontent.com/WCdPwR7cu8y6wIhX2WkAP_AzZGt42CNbjBu5S6JB0bh2eYUVa3X_pbS6xuHycvXEwS1I=w5120-h2880-rw",
+                image3: "https://play-lh.googleusercontent.com/3Qosih67pnKzmx_4lQ012DwG9ciCwh_91Xu6CyTenVaUwKQvasF1inJy29AtjWY8G4s=w5120-h2880-rw",
+                image4: "https://play-lh.googleusercontent.com/HnM3dOQfbt_KEFUf91ahbDovo_w47Uh48_oZo4Vvlik9BIhV1b_futcx7ZS9pkzWfu8=w5120-h2880-rw",
+                image5: "https://play-lh.googleusercontent.com/JGJNZutTgSgs2RlNFoAMd1K29SjngC6EeAq7J_BBm_HZTDYTONo8yGoBv_8k9wrxWDg=w5120-h2880-rw"
+            },
+            es: {
+                title: "Aprende inglés con historias",
+                slogan: "Mejora tu inglés con palabras resaltadas en tiempo real y traducciones instantáneas.",
+                button: "Comienza ahora",
+                image1: "https://play-lh.googleusercontent.com/qXsTF5VuQ9_mDXN7ifoqYEpfr6lGKKgXi_JKCc-DrHODWXwQS8jXHKyWpyfW923a63E=w5120-h2880-rw",
+                image2: "https://play-lh.googleusercontent.com/HhVEHHrQ27uE13D_Reha4hvoKUJ7i86C3FIooeFMPYMNragTMOeDkF3Lp2Q34Mx4sw=w5120-h2880-rw",
+                image3: "https://play-lh.googleusercontent.com/LWF4M73rImvMzP_8yW-ZWICFXp3h1uSnsooMFnyq8LwW-ZV3bx_F0fH0uT3_WAxjww=w5120-h2880-rw",
+                image4: "https://play-lh.googleusercontent.com/8XfBBrfADyoYroBv0Z1Us0RWQljENvQKdfo9sFEpqX-n_l80gDv-yiTuNPr0amlGtw=w5120-h2880-rw",
+                image5: "https://play-lh.googleusercontent.com/nh-aPCXKZ2b0g5MALW0o8fUqBzMeMM5Q0BI1m1IYQcScBCwXEjpPwNo5XigLrA52gg=w5120-h2880-rw"
+            },
+            pt: {
+                title: "Aprenda inglês com histórias",
+                slogan: "Melhore seu inglês com destaques em tempo real e traduções instantâneas!",
+                button: "Comece agora",
+                image1: "https://play-lh.googleusercontent.com/rlVRX4Z1kuqc4ghBM-CTKkwYz4ipmJ-SDs3LnxqBmaltBqvWH3dc3jysN97GL_V_9w=w5120-h2880-rw",
+                image2: "https://play-lh.googleusercontent.com/o2BZ2es7GQkfp_5a6FN8SFLHQF4sK-AuvdRnh1VKkGQg2BplUWrtcCDZSaEON9sAdQ=w5120-h2880-rw",
+                image3: "https://play-lh.googleusercontent.com/T7Rx-M50yVJHyDT3xTkDzkpGOFpdTYDc31oFKBNtVlfBiIMwOgptq2CgLuKwrAWSazM=w5120-h2880-rw",
+                image4: "https://play-lh.googleusercontent.com/k_dsHjDvC7zjqDTEGdB1D-umpfhtIEeT7qVst2cxH19iHigustUhb3Y4119Mo5opuQ=w5120-h2880-rw",
+                image5: "https://play-lh.googleusercontent.com/OgrJEfbB-Qh3wtm_Hi_1M0fhq0NGRT3bLpeNkRcrlk6823vE6PairtByvsH_R-B_1w=w5120-h2880-rw"
+            },
+            uk: {
+                title: "Вчіть англійську за допомогою історій",
+                slogan: "Покращуйте англійську з підсвічуванням слів у реальному часі та миттєвими перекладами!",
+                button: "Розпочати навчання",
+                image1: "https://play-lh.googleusercontent.com/14tIkc8aCsLNDDsrbmTH1On7o-niNjIM9Tjxr-NkWa-n2HWJ7Oyb8yJUt3f6nhXqOXfs=w5120-h2880-rw",
+                image2: "https://play-lh.googleusercontent.com/zotLDtWc7eKtnpOrG88LmXdgcAaGhxXbceynEtJHOAxbIqOp9_VwoOHd_HW9ePZh_d8x=w5120-h2880-rw",
+                image3: "https://play-lh.googleusercontent.com/O9NUGlNHJBRsLoYp-CqPPsFyKOuTTWwYOdb57uaFQfrPMokqymMOHxcgo3qIq_B-ElA=w5120-h2880-rw",
+                image4: "https://play-lh.googleusercontent.com/VhsKubgQUMfrkefCnUXk4m49-nbVkc5LFDsvI9YEgXROl4GuYGWOe9WXRx0pYj5g_Fg=w5120-h2880-rw",
+                image5: "https://play-lh.googleusercontent.com/szAkLuhgYKu6QEiXfy3J38dD7huU2V6t3FqWD4XR96s7Evuiqshu9_WaWYDoaPLy6A=w5120-h2880-rw",
+            },
+            ar: {
+                title: "تعلم الإنجليزية من خلال القصص",
+                slogan: "طوّر لغتك الإنجليزية مع تمييز الكلمات في الوقت الحقيقي وترجمات فورية",
+                button: "ابدأ الآن",
+                image1: "https://play-lh.googleusercontent.com/bRwcRwS0XFGRaP3FmAQC2wtBpvksxwZ7o1K5TVio6bK45jebrIxtVqdpaZAqK7PiXbE=w5120-h2880-rw",
+                image2: "https://play-lh.googleusercontent.com/XZVMfDTgQfTVVnvzhqBTNPHNswClyiQ2kvX1EmAzeseao51frQyio5_JnUACbt-IVWwA=w5120-h2880-rw",
+                image3: "https://play-lh.googleusercontent.com/UQP-BkC-aszchKPQHuJD5VpY1USfTSNJBCOOTowcpSagtj7O9dqwmaqeLsUGZLGAWCo=w5120-h2880-rw",
+                image4: "https://play-lh.googleusercontent.com/f2ufCgsSGogXGscyhf5ZfRMLjXAT-qRLgpqcBC8OZ71JIZMxi9uBYl6BHvq7ReqdFRM=w5120-h2880-rw",
+                image5: "https://play-lh.googleusercontent.com/OpCTCwLk-WY1UKqJaWbKLe2OybMFCyRI4X9cmm-VOHNUfv3A2VrmEYf7PxYV70dZ2rNc=w5120-h2880-rw",
+            }
+        };
+
+        const userLang = navigator.language.slice(0, 2);
+        const langContent = translations[userLang] || translations.en;
+
+        document.getElementById("title").innerText = langContent.title;
+        document.getElementById("slogan").innerText = langContent.slogan;
+        document.getElementById("cta-button").innerText = langContent.button;
+        document.getElementById("image1").src = langContent.image1;
+        document.getElementById("image2").src = langContent.image2;
+        document.getElementById("image3").src = langContent.image3;
+        document.getElementById("image4").src = langContent.image4;
+        document.getElementById("image5").src = langContent.image5;
+
+        const images = document.querySelectorAll(".image-popup");
+        const modal = document.getElementById("myModal");
+        const modalImage = document.getElementById("modal-image");
+        const closeBtn = document.getElementById("close-btn");
+
+        images.forEach(image => {
+            image.addEventListener("click", function () {
+                modal.style.display = "block";
+                modalImage.src = this.src;
+            });
+        });
+
+        closeBtn.onclick = function () {
+            modal.style.display = "none";
+        };
+
+        window.onclick = function (event) {
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        };
+
+        const ctaButton = document.getElementById("cta-button");
+
+        // Kullanıcı cihazını tespit etme
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        if (/android/i.test(userAgent)) {
+            ctaButton.addEventListener("click", function () {
+                window.location.href = "https://play.google.com/store/apps/details?id=com.hasbis.englishbook&utm_source=tiktok&utm_medium=ads&utm_campaign=eng_story_1";
+            });
+        } else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+            ctaButton.addEventListener("click", function () {
+                window.location.href = "https://apps.apple.com/app/apple-store/id6736916125?pt=127123061&ct=tiktokads2&mt=8";
+            });
+        } else {
+            ctaButton.addEventListener("click", function () {
+                window.location.href = "https://play.google.com/store/apps/details?id=com.hasbis.englishbook&utm_source=tiktok&utm_medium=ads&utm_campaign=eng_story_1";
+            });
+        }
+    </script>
+
+</body>
+
+</html>
